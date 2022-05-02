@@ -1,0 +1,7 @@
+name: UNCSurvivalS2
+version: '1.0'
+main: fr.teamunc.uncsurvivals2.UNCSurvivalS2
+api-version: 1.18
+prefix: UNC
+authors: [ teamunc ]
+description: UNCSurvival Saison 2
