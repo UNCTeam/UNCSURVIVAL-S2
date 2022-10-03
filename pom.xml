@@ -67,9 +67,20 @@
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.18.2-R0.1-SNAPSHOT</version>
+            <artifactId>spigot-api</artifactId>
+            <version>1.19.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>fr.teamunc</groupId>
+            <artifactId>Base_UNCLib</artifactId>
+            <version>1.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>fr.teamunc</groupId>
+            <artifactId>Ekip_UNCLib</artifactId>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>

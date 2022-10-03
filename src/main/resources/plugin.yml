@@ -5,3 +5,35 @@ api-version: 1.18
 prefix: UNC
 authors: [ teamunc ]
 description: UNCSurvival Saison 2
+depend:
+  - Base_UNCLib
+  - Ekip_UNCLib
+
+commands:
+  uncteam:
+    aliases: [ unct ]
+    usage: /uncteam or /unct
+    description: UnitedCraft Team system
+    permission: unc.admin
+
+  uncgame:
+    aliases: [ unc ]
+    usage: /uncgame or /unc
+    description: UnitedCraft Game system
+    permission: unc.admin
+
+  test:
+    aliases: [ t ]
+    usage: /test or /t
+    description: Test command
+    permission: unc.admin
+
+permissions:
+  unc.user:
+    name: unc.user
+    description: Allows the user to use the UnitedCraft commands
+    default: true
+  unc.admin:
+    name: unc.admin
+    description: Allows the admin to use the UnitedCraft commands
+    default: op
