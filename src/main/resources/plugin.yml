@@ -11,23 +11,6 @@ depend:
   - CustomItem_UNCLib
 
 commands:
-  uncteam:
-    aliases: [ unct ]
-    usage: /uncteam or /unct
-    description: UnitedCraft Team system
-    permission: unc.admin
-
-  uncgame:
-    aliases: [ unc ]
-    usage: /uncgame or /unc
-    description: UnitedCraft Game system
-    permission: unc.admin
-
-  uncitem:
-    aliases: [ unci ]
-    usage: /uncitem or /unci
-    description: UnitedCraft Item system
-    permission: unc.admin
 
   test:
     aliases: [ t ]

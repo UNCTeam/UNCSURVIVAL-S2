@@ -72,22 +72,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>fr.teamunc</groupId>
-            <artifactId>Base_UNCLib</artifactId>
-            <version>1.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>fr.teamunc</groupId>
-            <artifactId>CustomItem_UNCLib</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>fr.teamunc</groupId>
-            <artifactId>Ekip_UNCLib</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations-java5</artifactId>
             <version>23.0.0</version>

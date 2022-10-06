@@ -1,20 +1,9 @@
 package fr.teamunc.uncsurvivals2;
 
-import fr.teamunc.base_unclib.BaseLib;
-import fr.teamunc.customitem_unclib.CustomItemLib;
-import fr.teamunc.customitem_unclib.controllers.UNCCustomItemController;
-import fr.teamunc.customitem_unclib.models.UNCCustomSwordType;
-import fr.teamunc.ekip_unclib.EkipLib;
-import fr.teamunc.uncsurvivals2.metier.models.UNCPhase1;
-import fr.teamunc.uncsurvivals2.metier.models.UNCPhase2;
-import fr.teamunc.uncsurvivals2.metier.models.UNCPhase3;
 import fr.teamunc.uncsurvivals2.minecraft.commandsExec.UncSurvivalCommands;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public final class UNCSurvivalS2 extends JavaPlugin {
 
@@ -35,48 +24,12 @@ public final class UNCSurvivalS2 extends JavaPlugin {
             this.getDataFolder().mkdir();
         }
 
-        // init team informations
-        HashMap<String, Object> teamsinfosModel = new HashMap<>();
-        teamsinfosModel.put("money", 0);
-
         // init base lib
-        EkipLib.init(this, teamsinfosModel);
-        BaseLib.init(this);
-        CustomItemLib.init(this);
 
+        // init test lib
         this.getCommand("test").setExecutor(new UncSurvivalCommands());
-
-        // init custom items
-        initCustomItems();
-
-        // init game phases
-        initGamePhases();
     }
 
-    private void initGamePhases() {
-        BaseLib.getUNCPhaseController().registerTickLoop(0, new UNCPhase1());
-        BaseLib.getUNCPhaseController().registerTickLoop(1, new UNCPhase2());
-        BaseLib.getUNCPhaseController().registerTickLoop(2, new UNCPhase3());
-        BaseLib.getUNCPhaseController().registerFinalExpression(() -> {
-            Bukkit.broadcastMessage("FIN DU JEU");
-        });
-    }
-
-    public void initCustomItems() {
-        // TODO
-
-        UNCCustomSwordType amethystSword = UNCCustomSwordType.builder("AMETHYST_SWORD")
-                .name("Amethyst Sword")
-                .lore(new ArrayList<>(List.of("This is a custom sword")))
-                .modelData(1)
-                .maxDurability(100)
-                .unbreakable(true)
-                .attackDamage(10)
-                .attackSpeed(10)
-                .build();
-
-        CustomItemLib.getUNCCustomItemController().registerCustomItem(amethystSword);
-    }
 
     @Override
     public void onDisable() {
