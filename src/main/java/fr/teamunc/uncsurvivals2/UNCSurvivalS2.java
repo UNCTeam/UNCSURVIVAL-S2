@@ -10,6 +10,11 @@ import fr.teamunc.uncsurvivals2.metier.models.UNCPhase2;
 import fr.teamunc.uncsurvivals2.metier.models.UNCPhase3;
 import fr.teamunc.uncsurvivals2.minecraft.commandsExec.UncSurvivalCommands;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -46,8 +51,9 @@ public final class UNCSurvivalS2 extends JavaPlugin {
 
         this.getCommand("test").setExecutor(new UncSurvivalCommands());
 
-        // init custom items
+        // init custom items and AFTER recipes
         initCustomItems();
+        initRecipes();
 
         // init game phases
         initGamePhases();
@@ -76,6 +82,18 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                 .build();
 
         CustomItemLib.getUNCCustomItemController().registerCustomItem(amethystSword);
+    }
+
+    public void initRecipes() {
+        // TODO
+
+        NamespacedKey key = new NamespacedKey(this,"craftAmethystSword");
+        ItemStack result = CustomItemLib.getUNCCustomItemController().createCustomItem("AMETHYST_SWORD", 1);
+        ShapelessRecipe amethystSword = new ShapelessRecipe(key, result)
+                .addIngredient(Material.DIAMOND_SWORD)
+                .addIngredient(Material.STICK);
+
+        CustomItemLib.getUNCCustomItemController().registerCraft(amethystSword, null, false);
     }
 
     @Override
