@@ -76,8 +76,7 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                 .lore(new ArrayList<>(List.of("This is a custom sword")))
                 .modelData(1)
                 .maxDurability(100)
-                .unbreakable(true)
-                .attackDamage(10)
+                .attackDamage(10.0)
                 .attackSpeed(10)
                 .build();
 
