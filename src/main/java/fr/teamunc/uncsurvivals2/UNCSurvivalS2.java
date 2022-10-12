@@ -3,6 +3,7 @@ package fr.teamunc.uncsurvivals2;
 import fr.teamunc.base_unclib.BaseLib;
 import fr.teamunc.customitem_unclib.CustomItemLib;
 import fr.teamunc.customitem_unclib.controllers.UNCCustomItemController;
+import fr.teamunc.customitem_unclib.models.UNCCustomPickaxeType;
 import fr.teamunc.customitem_unclib.models.UNCCustomSwordType;
 import fr.teamunc.ekip_unclib.EkipLib;
 import fr.teamunc.uncsurvivals2.metier.models.UNCPhase1;
@@ -80,7 +81,14 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                 .attackSpeed(10)
                 .build();
 
-        CustomItemLib.getUNCCustomItemController().registerCustomItem(amethystSword);
+        UNCCustomPickaxeType amethystPickaxe = UNCCustomPickaxeType.builder("AMETHYST_PICKAXE", Material.WOODEN_PICKAXE)
+                .name("Amethyst Pickaxe")
+                .lore(new ArrayList<>(List.of("This is a custom pickaxe")))
+                .modelData(1)
+                .maxDurability(100)
+                .build();
+
+        CustomItemLib.getUNCCustomItemController().registerCustomItem(amethystSword, amethystPickaxe);
     }
 
     public void initRecipes() {
