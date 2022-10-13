@@ -1,6 +1,6 @@
 ![UncSurvival](4K-UNCSURVIVAL.png)
 
-VERSION : 1.18.2 (out with 1.19 ?)
+VERSION : 1.19.2 (1.20 ?)
 
 ## IMPORTANT PROCESS FOR DEV
 
