@@ -4,10 +4,7 @@ import fr.teamunc.base_unclib.BaseLib;
 import fr.teamunc.base_unclib.utils.helpers.Message;
 import fr.teamunc.customitem_unclib.CustomItemLib;
 import fr.teamunc.customitem_unclib.controllers.UNCCustomItemController;
-import fr.teamunc.customitem_unclib.models.UNCCustomActivableType;
-import fr.teamunc.customitem_unclib.models.UNCCustomPickaxeType;
-import fr.teamunc.customitem_unclib.models.UNCCustomStaticType;
-import fr.teamunc.customitem_unclib.models.UNCCustomSwordType;
+import fr.teamunc.customitem_unclib.models.*;
 import fr.teamunc.customitem_unclib.models.customArmors.UNCCustomBootsType;
 import fr.teamunc.customitem_unclib.models.customArmors.UNCCustomChestplateType;
 import fr.teamunc.customitem_unclib.models.customArmors.UNCCustomHelmetType;
@@ -150,6 +147,9 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                 .name("Amethyst Chestplate")
                 .lore(new ArrayList<>(List.of("This is a custom chestplate")))
                 .modelData(1)
+                .armor(20)
+                .armorToughness(20)
+                .knockbackResistance(20)
                 .maxDurability(1)
                 .build();
 
@@ -157,6 +157,9 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                 .name("Amethyst Helmet")
                 .lore(new ArrayList<>(List.of("This is a custom helmet")))
                 .modelData(1)
+                .armor(20)
+                .armorToughness(20)
+                .knockbackResistance(20)
                 .maxDurability(1)
                 .build();
 
@@ -164,6 +167,9 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                 .name("Amethyst Leggings")
                 .lore(new ArrayList<>(List.of("This is a custom leggings")))
                 .modelData(1)
+                .armor(20)
+                .armorToughness(20)
+                .knockbackResistance(20)
                 .maxDurability(1)
                 .build();
 
@@ -171,7 +177,18 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                 .name("Amethyst Boots")
                 .lore(new ArrayList<>(List.of("This is a custom boots")))
                 .modelData(1)
+                .armor(20)
+                .armorToughness(20)
+                .knockbackResistance(20)
                 .maxDurability(1)
+                .build();
+
+        UNCCustomFoodType amethystFood = UNCCustomFoodType.builder("AMETHYST_FOOD", Material.APPLE)
+                .name("Amethyst Food")
+                .lore(new ArrayList<>(List.of("This is a custom food")))
+                .modelData(1)
+                .foodLevel(20)
+                .saturation(20)
                 .build();
 
         CustomItemLib.getUNCCustomItemController().registerCustomItem(
@@ -182,7 +199,8 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                 amethystChestplate,
                 amethystHelmet,
                 amethystLeggings,
-                amethystBoots);
+                amethystBoots,
+                amethystFood);
     }
 
     public void initRecipes() {
