@@ -7,8 +7,6 @@ authors: [ teamunc ]
 description: UNCSurvival Saison 2
 depend:
   - Base_UNCLib
-  - Ekip_UNCLib
-  - CustomItem_UNCLib
 
 commands:
 
@@ -16,6 +14,12 @@ commands:
     aliases: [ t ]
     usage: /test or /t
     description: Test command
+    permission: unc.admin
+
+  uncinventory:
+    aliases: [ uncinv ]
+    usage: /uncinventory or /uncinv
+    description: Inventory test command
     permission: unc.admin
 
 permissions:

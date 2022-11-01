@@ -7,32 +7,19 @@ authors: [ teamunc ]
 description: UNCSurvival Saison 2
 depend:
   - Base_UNCLib
-  - Ekip_UNCLib
-  - CustomItem_UNCLib
 
 commands:
-  uncteam:
-    aliases: [ unct ]
-    usage: /uncteam or /unct
-    description: UnitedCraft Team system
-    permission: unc.admin
-
-  uncgame:
-    aliases: [ unc ]
-    usage: /uncgame or /unc
-    description: UnitedCraft Game system
-    permission: unc.admin
-
-  uncitem:
-    aliases: [ unci ]
-    usage: /uncitem or /unci
-    description: UnitedCraft Item system
-    permission: unc.admin
 
   test:
     aliases: [ t ]
     usage: /test or /t
     description: Test command
+    permission: unc.admin
+
+  uncinventory:
+    aliases: [ uncinv ]
+    usage: /uncinventory or /uncinv
+    description: Inventory test command
     permission: unc.admin
 
 permissions:
