@@ -9,6 +9,7 @@ depend:
   - Base_UNCLib
   - Ekip_UNCLib
   - CustomItem_UNCLib
+  - CustomBlock_UNCLib
 
 commands:
   uncteam:
@@ -27,6 +28,12 @@ commands:
     aliases: [ unci ]
     usage: /uncitem or /unci
     description: UnitedCraft Item system
+    permission: unc.admin
+
+  uncblock:
+    aliases: [ uncb ]
+    usage: /uncblock or /uncb
+    description: UnitedCraft Block system
     permission: unc.admin
 
   test:

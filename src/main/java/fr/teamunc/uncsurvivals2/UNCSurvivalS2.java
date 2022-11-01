@@ -2,6 +2,8 @@ package fr.teamunc.uncsurvivals2;
 
 import fr.teamunc.base_unclib.BaseLib;
 import fr.teamunc.base_unclib.utils.helpers.Message;
+import fr.teamunc.customblock_unclib.CustomBlockLib;
+import fr.teamunc.customblock_unclib.models.UNCCustomBlockType;
 import fr.teamunc.customitem_unclib.CustomItemLib;
 import fr.teamunc.customitem_unclib.controllers.UNCCustomItemController;
 import fr.teamunc.customitem_unclib.models.*;
@@ -57,11 +59,13 @@ public final class UNCSurvivalS2 extends JavaPlugin {
         EkipLib.init(this, teamsinfosModel);
         BaseLib.init(this);
         CustomItemLib.init(this);
+        CustomBlockLib.init(this);
 
         this.getCommand("test").setExecutor(new UncSurvivalCommands());
 
-        // init custom items and AFTER recipes
+        // init custom items and blocks AFTER recipes
         initCustomItems();
+        initCustomBlocks();
         initRecipes();
 
         // init game phases
@@ -109,7 +113,6 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                                 }
                             }
                         }
-
                     }
                     return 0;
                 })
@@ -201,6 +204,26 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                 amethystLeggings,
                 amethystBoots,
                 amethystFood);
+    }
+
+    public void initCustomBlocks() {
+        UNCCustomBlockType growth_block = UNCCustomBlockType.builder("GROWTH_BLOCK")
+                .name("Growth Block")
+                .lore(new ArrayList<>(List.of("This is a custom block")))
+                .modelData(1)
+                .instantBreak(true)
+                .build();
+
+        UNCCustomBlockType mincerblock = UNCCustomBlockType.builder("MINCER_BLOCK")
+                .name("Mincer Block")
+                .lore(new ArrayList<>(List.of("This is a custom block")))
+                .modelData(2)
+                .neverDrop(true)
+                .droppedItem(new ItemStack(Material.DIAMOND))
+                .blockMaterial(Material.GLASS)
+                .build();
+
+        CustomBlockLib.getCustomBlockController().registerCustomBlock(growth_block, mincerblock);
     }
 
     public void initRecipes() {

@@ -84,6 +84,11 @@
         </dependency>
         <dependency>
             <groupId>fr.teamunc</groupId>
+            <artifactId>CustomBlock_UNCLib</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>fr.teamunc</groupId>
             <artifactId>Ekip_UNCLib</artifactId>
             <version>1.0.0</version>
         </dependency>
