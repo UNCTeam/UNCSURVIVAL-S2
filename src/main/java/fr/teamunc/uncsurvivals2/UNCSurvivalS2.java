@@ -3,9 +3,12 @@ package fr.teamunc.uncsurvivals2;
 import fr.teamunc.base_unclib.BaseLib;
 import fr.teamunc.base_unclib.Base_UNCLib;
 import fr.teamunc.base_unclib.models.inventories.CancelSlot;
+import fr.teamunc.base_unclib.models.inventories.UNCContainerInventory;
 import fr.teamunc.base_unclib.models.inventories.UNCInventory;
 import fr.teamunc.base_unclib.models.inventories.UNCItemMenu;
+import fr.teamunc.base_unclib.models.jsonEntities.UNCEntitiesContainer;
 import fr.teamunc.uncsurvivals2.minecraft.commandsExec.UncSurvivalCommands;
+import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -15,6 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.UUID;
 
 public final class UNCSurvivalS2 extends JavaPlugin {
 
@@ -24,7 +28,9 @@ public final class UNCSurvivalS2 extends JavaPlugin {
         return instance;
     }
     // END SINGLETON
-
+    /* Player UUID / Chest UUID */
+    @Getter
+    private PlayerEnderChestContainer playerEnderChestContainer;
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -37,11 +43,16 @@ public final class UNCSurvivalS2 extends JavaPlugin {
 
         // init base lib
         BaseLib.init(this);
-
+        try {
+            this.playerEnderChestContainer = UNCEntitiesContainer.loadContainer("uncchest", PlayerEnderChestContainer.class);
+        } catch (Exception e) {
+            this.getLogger().info("Creating new uncchest container file");
+            this.playerEnderChestContainer = new PlayerEnderChestContainer();
+        }
         // Init interfaces
         this.initInterfaces();
         // init test lib
-        this.getCommand("test").setExecutor(new UncSurvivalCommands());
+        this.getCommand("uncchest").setExecutor(new UncSurvivalCommands());
     }
 
     public void initInterfaces() {
@@ -53,10 +64,10 @@ public final class UNCSurvivalS2 extends JavaPlugin {
         item.setItemMeta(itemMeta);
 
         ItemStack itemClick = new ItemStack(Material.ARROW);
-        ItemMeta itemMeta2 = item.getItemMeta();
-        itemMeta.setDisplayName("§b§lOuvrir un inventaire");
-        itemMeta.setLore(Arrays.asList("§7Cliquez pour tester"));
-        item.setItemMeta(itemMeta);
+        ItemMeta itemMeta2 = itemClick.getItemMeta();
+        itemMeta2.setDisplayName("§b§lOuvrir un inventaire");
+        itemMeta2.setLore(Arrays.asList("§7Cliquez pour tester"));
+        itemClick.setItemMeta(itemMeta);
 
         UNCInventory inventory = UNCInventory.builder("test", "§b§lTest", 9)
                 .cancelSlots(new CancelSlot[]{new CancelSlot(0,9)})
@@ -86,6 +97,6 @@ public final class UNCSurvivalS2 extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
+        this.playerEnderChestContainer.save("uncchest");
     }
 }

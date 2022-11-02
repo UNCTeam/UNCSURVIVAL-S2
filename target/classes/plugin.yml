@@ -10,9 +10,9 @@ depend:
 
 commands:
 
-  test:
+  uncchest:
     aliases: [ t ]
-    usage: /test or /t
+    usage: /uncchest
     description: Test command
     permission: unc.admin
 
