@@ -207,23 +207,20 @@ public final class UNCSurvivalS2 extends JavaPlugin {
     }
 
     public void initCustomBlocks() {
-        UNCCustomBlockType growth_block = UNCCustomBlockType.builder("GROWTH_BLOCK")
+        UNCCustomBlockType growthBlock = UNCCustomBlockType.builder("GROWTH_BLOCK")
                 .name("Growth Block")
                 .lore(new ArrayList<>(List.of("This is a custom block")))
                 .modelData(1)
                 .instantBreak(true)
                 .build();
 
-        UNCCustomBlockType mincerblock = UNCCustomBlockType.builder("MINCER_BLOCK")
-                .name("Mincer Block")
-                .lore(new ArrayList<>(List.of("This is a custom block")))
+        UNCCustomBlockType streetlightBlock = UNCCustomBlockType.builder("STREET_LIGHT_BLOCK")
+                .name("street light Block")
+                .lore(new ArrayList<>(List.of("This is a street light")))
                 .modelData(2)
-                .neverDrop(true)
-                .droppedItem(new ItemStack(Material.DIAMOND))
-                .blockMaterial(Material.GLASS)
                 .build();
 
-        CustomBlockLib.getCustomBlockController().registerCustomBlock(growth_block, mincerblock);
+        CustomBlockLib.getCustomBlockController().registerCustomBlock(growthBlock, streetlightBlock);
     }
 
     public void initRecipes() {
