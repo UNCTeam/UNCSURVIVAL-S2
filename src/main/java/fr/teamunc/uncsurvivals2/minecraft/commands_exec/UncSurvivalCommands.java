@@ -1,4 +1,4 @@
-package fr.teamunc.uncsurvivals2.minecraft.commandsExec;
+package fr.teamunc.uncsurvivals2.minecraft.commands_exec;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
