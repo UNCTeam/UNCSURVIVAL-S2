@@ -3,7 +3,6 @@ package fr.teamunc.uncsurvivals2;
 import fr.teamunc.base_unclib.BaseLib;
 import fr.teamunc.base_unclib.models.tickloops.UNCPhase;
 import fr.teamunc.customblock_unclib.CustomBlockLib;
-import fr.teamunc.customblock_unclib.models.UNCCustomBlock;
 import fr.teamunc.customblock_unclib.models.UNCCustomBlockType;
 import fr.teamunc.customitem_unclib.CustomItemLib;
 import fr.teamunc.customitem_unclib.models.*;
@@ -17,9 +16,7 @@ import fr.teamunc.uncsurvivals2.metier.models.UNCPhase1;
 import fr.teamunc.uncsurvivals2.metier.models.UNCPhase2;
 import fr.teamunc.uncsurvivals2.metier.models.UNCPhase3;
 import fr.teamunc.uncsurvivals2.minecraft.commands_exec.UncSurvivalCommands;
-import lombok.var;
 import org.bukkit.*;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -31,7 +28,6 @@ import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.*;
 
 public final class UNCSurvivalS2 extends JavaPlugin {
@@ -84,7 +80,7 @@ public final class UNCSurvivalS2 extends JavaPlugin {
 
     public void initScoreboard() {
         BaseLib.getUNCScoreboardController().registerUNCScoreboardType(
-                "§6§lUNC Survival Saison 2",
+            "§6§lUNC Survival Saison 2",
                 // lines actualiser
                 (player) -> {
                     List<String> lines = new ArrayList<>();
