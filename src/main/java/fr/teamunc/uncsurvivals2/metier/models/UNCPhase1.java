@@ -1,12 +1,19 @@
 package fr.teamunc.uncsurvivals2.metier.models;
 
+import fr.teamunc.base_unclib.BaseLib;
 import fr.teamunc.base_unclib.models.tickloops.UNCPhase;
 import org.bukkit.Bukkit;
 
+import java.time.LocalDateTime;
+
 public class UNCPhase1 extends UNCPhase {
     @Override
+    public String getName() {
+        return "Phase 1";
+    }
+
+    @Override
     public void onTick() {
-        Bukkit.broadcastMessage("Phase 1");
     }
 
     @Override
@@ -30,7 +37,17 @@ public class UNCPhase1 extends UNCPhase {
     }
 
     @Override
+    public boolean isWithADueDate() {
+        return false;
+    }
+
+    @Override
     public int getMaxTick() {
-        return 10;
+        return 20 * 5;
+    }
+
+    @Override
+    public LocalDateTime getEndingDate() {
+        return null;
     }
 }

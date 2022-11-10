@@ -1,7 +1,7 @@
 package fr.teamunc.uncsurvivals2;
 
 import fr.teamunc.base_unclib.BaseLib;
-import fr.teamunc.base_unclib.utils.helpers.Message;
+import fr.teamunc.base_unclib.models.tickloops.UNCPhase;
 import fr.teamunc.customblock_unclib.CustomBlockLib;
 import fr.teamunc.customblock_unclib.models.UNCCustomBlock;
 import fr.teamunc.customblock_unclib.models.UNCCustomBlockType;
@@ -12,10 +12,12 @@ import fr.teamunc.customitem_unclib.models.customArmors.UNCCustomChestplateType;
 import fr.teamunc.customitem_unclib.models.customArmors.UNCCustomHelmetType;
 import fr.teamunc.customitem_unclib.models.customArmors.UNCCustomLeggingsType;
 import fr.teamunc.ekip_unclib.EkipLib;
+import fr.teamunc.ekip_unclib.models.UNCTeam;
 import fr.teamunc.uncsurvivals2.metier.models.UNCPhase1;
 import fr.teamunc.uncsurvivals2.metier.models.UNCPhase2;
 import fr.teamunc.uncsurvivals2.metier.models.UNCPhase3;
 import fr.teamunc.uncsurvivals2.minecraft.commands_exec.UncSurvivalCommands;
+import lombok.var;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -28,6 +30,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public final class UNCSurvivalS2 extends JavaPlugin {
@@ -51,7 +55,8 @@ public final class UNCSurvivalS2 extends JavaPlugin {
 
         // init team informations
         HashMap<String, Object> teamsinfosModel = new HashMap<>();
-        teamsinfosModel.put("money", 0);
+        teamsinfosModel.put("money", 0.0);
+        teamsinfosModel.put("score", 10.0);
 
         // init base lib
         EkipLib.init(this, teamsinfosModel);
@@ -65,6 +70,7 @@ public final class UNCSurvivalS2 extends JavaPlugin {
         initCustomItems();
         initCustomBlocks();
         initRecipes();
+        initScoreboard();
 
         // init game phases
         initGamePhases();
@@ -74,7 +80,46 @@ public final class UNCSurvivalS2 extends JavaPlugin {
         BaseLib.getUNCPhaseController().registerTickLoop(0, new UNCPhase1());
         BaseLib.getUNCPhaseController().registerTickLoop(1, new UNCPhase2());
         BaseLib.getUNCPhaseController().registerTickLoop(2, new UNCPhase3());
-        BaseLib.getUNCPhaseController().registerFinalExpression(() -> Bukkit.broadcastMessage("FIN DU JEU"));
+    }
+
+    public void initScoreboard() {
+        BaseLib.getUNCScoreboardController().registerUNCScoreboardType(
+                "§6§lUNC Survival Saison 2",
+                // lines actualiser
+                (player) -> {
+                    List<String> lines = new ArrayList<>();
+                    UNCTeam team = EkipLib.getTeamController().getTeamOfPlayer(player.getUniqueId());
+                    UNCPhase phase = BaseLib.getUNCPhaseController().getActualPhaseInstance();
+
+                    // line 0
+                    lines.add(ChatColor.GRAY + "=================");
+
+                    if (team != null) {
+                        // line 1
+                        lines.add(ChatColor.GREEN + "Team: " + ChatColor.GOLD + team.getName());
+
+                        // line 2
+                        lines.add(ChatColor.GREEN + "Money: " + ChatColor.GOLD + team.getAdditionalInformation("money", Double.class));
+
+                        // line 3
+                        lines.add(ChatColor.GREEN + "Score: " + ChatColor.GOLD + team.getAdditionalInformation("score", Double.class));
+                    }
+                    // line 4
+                    lines.add(ChatColor.GREEN + "Phase: " + ChatColor.GOLD + (phase != null ? phase.getName() : "Aucune"));
+
+                    // line 5
+                    lines.add(ChatColor.GREEN + "Fin de phase: ");
+
+                    // line 6
+                    Duration durationLeft = BaseLib.getUNCPhaseController().getDurationLeft();
+                    lines.add(ChatColor.GREEN + String.format("§b%02d§6j §b%02d§6h §b%02d§6m §b%02d§6s", durationLeft.toDays(), durationLeft.toHours() % 24, durationLeft.toMinutes() % 60, durationLeft.getSeconds() % 60));
+
+                    // line 7
+                    lines.add(ChatColor.GRAY + "=================");
+
+                    return lines;
+                }
+        );
     }
 
     public void initCustomItems() {
@@ -235,7 +280,9 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                 .name("Growth Block")
                 .lore(new ArrayList<>(List.of("This is a custom block")))
                 .modelData(1)
-                .instantBreak(true)
+                .blockMaterial(Material.STONE)
+                .dropOnlyIfCorrectToolUsed(true)
+                .droppedItem(new ItemStack(Material.DIAMOND))
                 .build();
 
         UNCCustomBlockType streetlightBlock = UNCCustomBlockType.builder("STREET_LIGHT_BLOCK")
