@@ -1,6 +1,7 @@
 package fr.teamunc.uncsurvivals2;
 
 import fr.teamunc.base_unclib.BaseLib;
+import fr.teamunc.base_unclib.models.jsonEntities.UNCEntitiesContainer;
 import fr.teamunc.base_unclib.models.tickloops.UNCPhase;
 import fr.teamunc.customblock_unclib.CustomBlockLib;
 import fr.teamunc.customblock_unclib.models.UNCCustomBlockType;
@@ -12,10 +13,13 @@ import fr.teamunc.customitem_unclib.models.customArmors.UNCCustomHelmetType;
 import fr.teamunc.customitem_unclib.models.customArmors.UNCCustomLeggingsType;
 import fr.teamunc.ekip_unclib.EkipLib;
 import fr.teamunc.ekip_unclib.models.UNCTeam;
-import fr.teamunc.uncsurvivals2.metier.models.UNCPhase1;
-import fr.teamunc.uncsurvivals2.metier.models.UNCPhase2;
-import fr.teamunc.uncsurvivals2.metier.models.UNCPhase3;
+import fr.teamunc.uncsurvivals2.controllers.UNCPlayerController;
+import fr.teamunc.uncsurvivals2.metier.models.phases.UNCPhase1;
+import fr.teamunc.uncsurvivals2.metier.models.phases.UNCPhase2;
+import fr.teamunc.uncsurvivals2.metier.models.phases.UNCPhase3;
 import fr.teamunc.uncsurvivals2.minecraft.commands_exec.UncSurvivalCommands;
+import fr.teamunc.uncsurvivals2.minecraft.eventsListeners.PlayerListener;
+import lombok.Getter;
 import org.bukkit.*;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -39,6 +43,9 @@ public final class UNCSurvivalS2 extends JavaPlugin {
     }
     // END SINGLETON
 
+    @Getter
+    private UNCPlayerController playerController;
+
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -48,6 +55,7 @@ public final class UNCSurvivalS2 extends JavaPlugin {
         if (!this.getDataFolder().exists()) {
             this.getDataFolder().mkdir();
         }
+        UNCEntitiesContainer.init(getDataFolder());
 
         // init team informations
         HashMap<String, Object> teamsinfosModel = new HashMap<>();
@@ -60,16 +68,28 @@ public final class UNCSurvivalS2 extends JavaPlugin {
         CustomItemLib.init(this);
         CustomBlockLib.init(this);
 
-        this.getCommand("test").setExecutor(new UncSurvivalCommands());
-
         // init custom items and blocks AFTER recipes
         initCustomItems();
         initCustomBlocks();
         initRecipes();
         initScoreboard();
+        initController();
+        initCommandsAndListeners();
 
         // init game phases
         initGamePhases();
+    }
+
+    private void initCommandsAndListeners() {
+        // Commands
+        this.getCommand("test").setExecutor(new UncSurvivalCommands());
+
+        // Listeners
+        this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+    }
+
+    private void initController() {
+        this.playerController = new UNCPlayerController();
     }
 
     private void initGamePhases() {
@@ -346,5 +366,6 @@ public final class UNCSurvivalS2 extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        this.getPlayerController().save();
     }
 }

@@ -1,53 +1,56 @@
-package fr.teamunc.uncsurvivals2.metier.models;
+package fr.teamunc.uncsurvivals2.metier.models.phases;
 
-import fr.teamunc.base_unclib.BaseLib;
 import fr.teamunc.base_unclib.models.tickloops.UNCPhase;
+import fr.teamunc.uncsurvivals2.UNCSurvivalS2;
 import org.bukkit.Bukkit;
 
 import java.time.LocalDateTime;
 
-public class UNCPhase1 extends UNCPhase {
+public class UNCPhase3 extends UNCPhase {
     @Override
     public String getName() {
-        return "Phase 1";
+        return "Phase 3";
     }
 
     @Override
     public void onTick() {
+        UNCSurvivalS2.get().getPlayerController().onTickUNCPlayers(getTick() % 20);
     }
 
     @Override
     public void onPhaseStart() {
-        Bukkit.broadcastMessage("Phase 1 start");
+        Bukkit.broadcastMessage("Phase 3 start");
     }
 
     @Override
     public void onPhaseEnd() {
-        Bukkit.broadcastMessage("Phase 1 end");
+        Bukkit.broadcastMessage("Phase 3 end");
+
+        Bukkit.broadcastMessage("FIN DU JEU");
     }
 
     @Override
     public boolean isInGamePhase() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isLastPhase() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isWithADueDate() {
-        return false;
+        return true;
     }
 
     @Override
     public int getMaxTick() {
-        return 20 * 5;
+        return 0;
     }
 
     @Override
     public LocalDateTime getEndingDate() {
-        return null;
+        return LocalDateTime.of(2022, 11,11,19,20);
     }
 }
