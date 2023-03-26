@@ -3,7 +3,9 @@ package fr.teamunc.uncsurvivals2;
 import fr.teamunc.base_unclib.BaseLib;
 import fr.teamunc.base_unclib.models.jsonEntities.UNCEntitiesContainer;
 import fr.teamunc.base_unclib.models.tickloops.UNCPhase;
+import fr.teamunc.base_unclib.utils.helpers.Message;
 import fr.teamunc.customblock_unclib.CustomBlockLib;
+import fr.teamunc.customblock_unclib.models.UNCCustomBlock;
 import fr.teamunc.customblock_unclib.models.UNCCustomBlockType;
 import fr.teamunc.customitem_unclib.CustomItemLib;
 import fr.teamunc.customitem_unclib.models.*;
@@ -19,12 +21,14 @@ import fr.teamunc.uncsurvivals2.metier.models.phases.UNCPhase2;
 import fr.teamunc.uncsurvivals2.metier.models.phases.UNCPhase3;
 import fr.teamunc.uncsurvivals2.minecraft.commands_exec.UncSurvivalCommands;
 import fr.teamunc.uncsurvivals2.minecraft.eventsListeners.PlayerListener;
+import fr.teamunc.zone_unclib.ZoneLib;
 import lombok.Getter;
 import org.bukkit.*;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -67,6 +71,7 @@ public final class UNCSurvivalS2 extends JavaPlugin {
         BaseLib.init(this);
         CustomItemLib.init(this);
         CustomBlockLib.init(this);
+        ZoneLib.init(this,new HashMap<>());
 
         // init custom items and blocks AFTER recipes
         initCustomItems();
@@ -309,6 +314,31 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                 .droppedItem(new ItemStack(Material.DIAMOND))
                 .build();
 
+        UNCCustomBlockType fleshEater = UNCCustomBlockType.builder("FLESH_EATER")
+                .name("Flesh Eater Block")
+                .lore(new ArrayList<>(List.of("This is a flesh eater")))
+                .modelData(4)
+                .instantBreak(true)
+                .defaultAdditionalInformation(new HashMap<>(Map.of("destinationSet", false)))
+                .actionRunnable(block -> {
+                    // play particles
+                    block.getLocation().getWorld().spawnParticle(
+                            Particle.ASH,
+                            block.getLocation().clone().add(0.5, 1, 0.5),
+                            20,
+                            0.25,
+                            0.25,
+                            0.25,
+                            0.1);
+                })
+                .action((event, uncCustomBlock) -> {
+                    if (event instanceof BlockPlaceEvent) {
+                        BlockPlaceEvent blockPlaceEvent = (BlockPlaceEvent) event;
+                        Message.Get().broadcastMessageToEveryone(blockPlaceEvent.getPlayer().getName());
+                    }
+                })
+                .build();
+
         UNCCustomBlockType foreuseBlock = UNCCustomBlockType.builder("FOREUSE_BLOCK")
                 .name("Foreuse Block")
                 .lore(new ArrayList<>(List.of("This is a foreuse")))
@@ -348,7 +378,7 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                 .addBaseAdditionalData("Y", 1.0)
                 .build();
 
-        CustomBlockLib.getCustomBlockController().registerCustomBlock(growthBlock, streetlightBlock, foreuseBlock);
+        CustomBlockLib.getCustomBlockController().registerCustomBlock(growthBlock, streetlightBlock, foreuseBlock, fleshEater);
     }
 
     public void initRecipes() {

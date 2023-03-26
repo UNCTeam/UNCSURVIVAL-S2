@@ -59,11 +59,11 @@ public class UNCPlayerController {
 
     public void onTickUNCPlayers(int tickInSecond) {
         // actualise madness display bar
-        this.getPlayers().forEach(UNCPlayer::actualiseMadnessDisplayBar);
+        this.getPlayers().forEach(uncPlayer -> uncPlayer.getMadnessInfo().actualiseMadnessDisplayBar());
 
         // apply madness effects only each 10 ticks
         if (tickInSecond == 0) {
-            this.getPlayers().forEach(UNCPlayer::applyMadnessEffects);
+            this.getPlayers().forEach(uncPlayer -> uncPlayer.getMadnessInfo().applyMadnessEffects());
         }
     }
 
@@ -86,8 +86,8 @@ public class UNCPlayerController {
         // only in phase 2 or more
         if (Math.random() < 0.33 && BaseLib.getUNCPhaseController().getPhaseNumber() > 0) {
             Optional<UNCPlayer> player = this.getPlayers().stream().filter(uncPlayer -> uncPlayer.getUuid().equals(playerUUID)).findFirst();
-            if (player.isPresent() && !player.get().isDemon()) {
-                player.get().addMadness(amount);
+            if (player.isPresent() && !player.get().getMadnessInfo().isDemon()) {
+                player.get().getMadnessInfo().addMadness(amount);
             }
         }
     }

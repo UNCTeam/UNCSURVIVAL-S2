@@ -93,6 +93,11 @@
             <version>1.0.0</version>
         </dependency>
         <dependency>
+            <groupId>fr.teamunc</groupId>
+            <artifactId>Zone_UNCLib</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations-java5</artifactId>
             <version>23.0.0</version>

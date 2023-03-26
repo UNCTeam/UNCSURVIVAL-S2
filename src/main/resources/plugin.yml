@@ -10,6 +10,7 @@ depend:
   - Ekip_UNCLib
   - CustomItem_UNCLib
   - CustomBlock_UNCLib
+  - Zone_UNCLib
 
 commands:
   uncteam:
@@ -34,6 +35,12 @@ commands:
     aliases: [ uncb ]
     usage: /uncblock or /uncb
     description: UnitedCraft Block system
+    permission: unc.admin
+
+  unczone:
+    aliases: [ uncz ]
+    usage: /unczone or /uncz
+    description: UnitedCraft Zone system
     permission: unc.admin
 
   test:
