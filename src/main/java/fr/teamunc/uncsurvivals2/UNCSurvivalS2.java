@@ -235,6 +235,44 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                 .maxDurability(2)
                 .build();
 
+        UNCCustomActivableType furnaceAccessory = UNCCustomActivableType.builder("FURNACE_ACCESSORY")
+                .name("Ores Furnace Accessory")
+                .lore(new ArrayList<>(List.of("This is a custom activable item that", "can be used to cook all ores in", "the player's inventory")))
+                .modelData(2)
+                .actionToRun(((itemStack, player) -> {
+                    // cook 1 itemStack in the player's inventory
+                    for (ItemStack item : player.getInventory().getContents()) {
+                        if (item == null) {
+                            continue;
+                        }
+
+                        if (item.getType() == Material.IRON_ORE) {
+                            item.setType(Material.IRON_INGOT);
+                            break;
+                        } else if (item.getType() == Material.GOLD_ORE) {
+                            item.setType(Material.GOLD_INGOT);
+                            break;
+                        } else if (item.getType() == Material.COAL_ORE) {
+                            item.setType(Material.COAL);
+                            break;
+                        } else if (item.getType() == Material.DIAMOND_ORE) {
+                            item.setType(Material.DIAMOND);
+                            break;
+                        } else if (item.getType() == Material.EMERALD_ORE) {
+                            item.setType(Material.EMERALD);
+                            break;
+                        } else if (item.getType() == Material.LAPIS_ORE) {
+                            item.setType(Material.LAPIS_LAZULI);
+                            break;
+                        } else if (item.getType() == Material.REDSTONE_ORE) {
+                            item.setType(Material.REDSTONE);
+                            break;
+                        }
+                    }
+                }))
+                .maxDurability(2)
+                .build();
+
         UNCCustomChestplateType amethystChestplate = UNCCustomChestplateType.builder("AMETHYST_CHESTPLATE")
                 .name("Amethyst Chestplate")
                 .lore(new ArrayList<>(List.of("This is a custom chestplate")))
@@ -293,7 +331,8 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                 amethystLeggings,
                 amethystBoots,
                 amethystFood,
-                strangeSword);
+                strangeSword,
+                furnaceAccessory);
     }
 
     public void initCustomBlocks() {
