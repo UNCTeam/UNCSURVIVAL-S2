@@ -23,6 +23,7 @@ import fr.teamunc.uncsurvivals2.minecraft.commands_exec.UncSurvivalCommands;
 import fr.teamunc.uncsurvivals2.minecraft.eventsListeners.PlayerListener;
 import fr.teamunc.zone_unclib.ZoneLib;
 import lombok.Getter;
+import lombok.val;
 import org.bukkit.*;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -33,9 +34,13 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 public final class UNCSurvivalS2 extends JavaPlugin {
@@ -240,37 +245,63 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                 .lore(new ArrayList<>(List.of("This is a custom activable item that", "can be used to cook all ores in", "the player's inventory")))
                 .modelData(2)
                 .actionToRun(((itemStack, player) -> {
+
+                    // cooldown TODO améliorer ce systeme et le mettre dans le controller de la lib item custom
+                    String key = "cooldown";
+                    NamespacedKey namespacedKey = new NamespacedKey(CustomItemLib.getPlugin(), key);
+
+                    ItemMeta meta = itemStack.getItemMeta();
+                    PersistentDataContainer data = meta.getPersistentDataContainer();
+                    long lastUsed = data.getOrDefault(namespacedKey, PersistentDataType.STRING, "0").equals("0") ? 0 : Long.parseLong(data.get(namespacedKey, PersistentDataType.STRING));
+
+                    long now = Instant.now().getEpochSecond();
+
+                    if (!data.has(namespacedKey, PersistentDataType.STRING))
+                        throw new IllegalStateException("The furnace accessory of "+player.getName()+" does not have a cooldown");
+
+                    if (now - lastUsed < 30) return;
+
                     // cook 1 itemStack in the player's inventory
                     for (ItemStack item : player.getInventory().getContents()) {
                         if (item == null) {
                             continue;
                         }
 
+                        boolean worked = false;
+
                         if (item.getType() == Material.IRON_ORE) {
                             item.setType(Material.IRON_INGOT);
-                            break;
+                            worked = true;
                         } else if (item.getType() == Material.GOLD_ORE) {
                             item.setType(Material.GOLD_INGOT);
-                            break;
+                            worked = true;
                         } else if (item.getType() == Material.COAL_ORE) {
                             item.setType(Material.COAL);
-                            break;
+                            worked = true;
                         } else if (item.getType() == Material.DIAMOND_ORE) {
                             item.setType(Material.DIAMOND);
-                            break;
+                            worked = true;
                         } else if (item.getType() == Material.EMERALD_ORE) {
                             item.setType(Material.EMERALD);
-                            break;
+                            worked = true;
                         } else if (item.getType() == Material.LAPIS_ORE) {
                             item.setType(Material.LAPIS_LAZULI);
-                            break;
+                            worked = true;
                         } else if (item.getType() == Material.REDSTONE_ORE) {
                             item.setType(Material.REDSTONE);
+                            worked = true;
+                        }
+
+                        if (worked) {
+                            data.set(new NamespacedKey(CustomItemLib.getPlugin(), key), PersistentDataType.STRING, String.valueOf(now));
+                            itemStack.setItemMeta(meta);
                             break;
                         }
                     }
+
+
                 }))
-                .maxDurability(2)
+                .defaultAdditionalInformation(new HashMap<>(Map.of("lastused", 0L)))
                 .build();
 
         UNCCustomChestplateType amethystChestplate = UNCCustomChestplateType.builder("AMETHYST_CHESTPLATE")
