@@ -246,20 +246,15 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                 .modelData(2)
                 .actionToRun(((itemStack, player) -> {
 
-                    // cooldown TODO améliorer ce systeme et le mettre dans le controller de la lib item custom
-                    String key = "cooldown";
-                    NamespacedKey namespacedKey = new NamespacedKey(CustomItemLib.getPlugin(), key);
+                    String key = "lastused";
 
-                    ItemMeta meta = itemStack.getItemMeta();
-                    PersistentDataContainer data = meta.getPersistentDataContainer();
-                    long lastUsed = data.getOrDefault(namespacedKey, PersistentDataType.STRING, "0").equals("0") ? 0 : Long.parseLong(data.get(namespacedKey, PersistentDataType.STRING));
+                    String lastusedSTR = CustomItemLib.getUNCCustomItemController().getAdditionalInformations(itemStack, key);
+
+                    Long lastUsed = Long.parseLong(lastusedSTR);
 
                     long now = Instant.now().getEpochSecond();
 
-                    if (!data.has(namespacedKey, PersistentDataType.STRING))
-                        throw new IllegalStateException("The furnace accessory of "+player.getName()+" does not have a cooldown");
-
-                    if (now - lastUsed < 30) return;
+                    if (now - lastUsed < 20) return;
 
                     // cook 1 itemStack in the player's inventory
                     for (ItemStack item : player.getInventory().getContents()) {
@@ -272,7 +267,7 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                         if (item.getType() == Material.IRON_ORE) {
                             item.setType(Material.IRON_INGOT);
                             worked = true;
-                        } else if (item.getType() == Material.GOLD_ORE) {
+                        } else if (item.getType() == Material.GOLD_ORE || item.getType() == Material.NETHER_GOLD_ORE) {
                             item.setType(Material.GOLD_INGOT);
                             worked = true;
                         } else if (item.getType() == Material.COAL_ORE) {
@@ -290,11 +285,16 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                         } else if (item.getType() == Material.REDSTONE_ORE) {
                             item.setType(Material.REDSTONE);
                             worked = true;
+                        } else if (item.getType() == Material.NETHER_QUARTZ_ORE) {
+                            item.setType(Material.QUARTZ);
+                            worked = true;
+                        } else if (item.getType() == Material.COPPER_ORE) {
+                            item.setType(Material.COPPER_INGOT);
+                            worked = true;
                         }
 
                         if (worked) {
-                            data.set(new NamespacedKey(CustomItemLib.getPlugin(), key), PersistentDataType.STRING, String.valueOf(now));
-                            itemStack.setItemMeta(meta);
+                            CustomItemLib.getUNCCustomItemController().setAdditionalInformations(itemStack, key, String.valueOf(now));
                             break;
                         }
                     }
@@ -415,7 +415,15 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                 .modelData(3)
                 .instantBreak(true)
                 .droppedItem(new ItemStack(Material.DIAMOND))
-                .actionRunnable((block) -> {
+                .actionToRunOnPlace((uncCustomBlock, player) -> {
+                    uncCustomBlock.setAdditionalInformation("PlayerUUID", player.getUniqueId());
+                })
+                .actionRunnable(block -> {
+
+                    // break the block as a player
+                    Player player = Bukkit.getPlayer(block.getAdditionalInformation("PlayerUUID", UUID.class));
+
+                    if (player == null) return;
 
                     // break block in an area of 3x3 blocks at the Y level of the block
                     Location blockLocation = block.getLocation();
@@ -436,9 +444,11 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                                         blockLocation.getZ() + z);
                                 // drop items at the top of the main block (the block that has been placed)
                                 for (ItemStack itemStack : location.getBlock().getDrops()) {
-                                    block.getLocation().getWorld().dropItemNaturally(block.getLocation().clone().add(0,1,0),itemStack);
+                                    if (player.breakBlock(location.getBlock()))
+                                        block.getLocation().getWorld().dropItemNaturally(block.getLocation().clone().add(0,1,0),itemStack);
+                                    else return;
                                 }
-                                location.getBlock().setType(Material.AIR);
+
                             }
                         }
                     }
@@ -446,6 +456,7 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                     block.setAdditionalInformation("Y", yLevelToAdd + 1.0);
                 })
                 .addBaseAdditionalData("Y", 1.0)
+                .addBaseAdditionalData("PlayerUUID", null)
                 .build();
 
         CustomBlockLib.getCustomBlockController().registerCustomBlock(growthBlock, streetlightBlock, foreuseBlock, fleshEater);
