@@ -16,6 +16,8 @@ import fr.teamunc.customitem_unclib.models.customArmors.UNCCustomLeggingsType;
 import fr.teamunc.ekip_unclib.EkipLib;
 import fr.teamunc.ekip_unclib.models.UNCTeam;
 import fr.teamunc.uncsurvivals2.controllers.UNCPlayerController;
+import fr.teamunc.uncsurvivals2.helpers.BlockInitiator;
+import fr.teamunc.uncsurvivals2.helpers.ItemInitiator;
 import fr.teamunc.uncsurvivals2.metier.models.phases.UNCPhase1;
 import fr.teamunc.uncsurvivals2.metier.models.phases.UNCPhase2;
 import fr.teamunc.uncsurvivals2.metier.models.phases.UNCPhase3;
@@ -24,6 +26,7 @@ import fr.teamunc.uncsurvivals2.minecraft.eventsListeners.PlayerListener;
 import fr.teamunc.zone_unclib.ZoneLib;
 import lombok.Getter;
 import lombok.val;
+import lombok.var;
 import org.bukkit.*;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -79,8 +82,7 @@ public final class UNCSurvivalS2 extends JavaPlugin {
         ZoneLib.init(this,new HashMap<>());
 
         // init custom items and blocks AFTER recipes
-        initCustomItems();
-        initCustomBlocks();
+        initCustomObjects();
         initRecipes();
         initScoreboard();
         initController();
@@ -88,6 +90,14 @@ public final class UNCSurvivalS2 extends JavaPlugin {
 
         // init game phases
         initGamePhases();
+    }
+
+    private void initCustomObjects() {
+        var itemInitiator = new ItemInitiator();
+        itemInitiator.init();
+
+        var blockInitiator = new BlockInitiator();
+        blockInitiator.init();
     }
 
     private void initCommandsAndListeners() {
@@ -148,330 +158,18 @@ public final class UNCSurvivalS2 extends JavaPlugin {
         );
     }
 
-    public void initCustomItems() {
-        // TODO
-
-        UNCCustomSwordType amethystSword = UNCCustomSwordType.builder("AMETHYST_SWORD")
-                .name("Amethyst Sword")
-                .lore(new ArrayList<>(List.of("This is a custom sword")))
-                .modelData(1)
-                .maxDurability(100)
-                .attackDamage(10.0)
-                .attackSpeed(10)
-                .build();
-
-        UNCCustomSwordType strangeSword = UNCCustomSwordType.builder("STRANGE_SWORD")
-                .name("Strange Sword")
-                .lore(new ArrayList<>(List.of(
-                        "This sword is a ancient artifact...",
-                        "found in the depths of the earth",
-                        "it is said that it has the power",
-                        "to health demons by draining living's",
-                        "life force",
-                        "",
-                        "§r§6§lUtility:",
-                        "§r§8- §eEat a player's health")))
-                .modelData(2)
-                .maxDurability(432)
-                .attackDamage(1.0)
-                .action((Event event) -> {
-                    if (event instanceof EntityDamageByEntityEvent) {
-                        EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-                        if (e.getEntity() instanceof Player) {
-                            Player p = (Player) e.getDamager();
-                            p.setFoodLevel(Math.min(p.getFoodLevel() + 4,20));
-                            return 10;
-                        }
-                    }
-                    return 0;
-                })
-                .build();
-
-        UNCCustomPickaxeType amethystPickaxe = UNCCustomPickaxeType.builder("AMETHYST_PICKAXE", Material.WOODEN_PICKAXE)
-                .name("Amethyst Pickaxe")
-                .lore(new ArrayList<>(List.of("This is a custom pickaxe")))
-                .modelData(1)
-                .action(event -> {
-                    if (event instanceof BlockBreakEvent) {
-                        BlockBreakEvent blockBreakEvent = (BlockBreakEvent) event;
-                        ItemStack item = blockBreakEvent.getPlayer().getInventory().getItemInMainHand();
-                        // break block in an area of 3x3x3 blocks of the same block
-                        Location blockLocation = blockBreakEvent.getBlock().getLocation();
-                        for (int x = -1; x <= 1; x++) {
-                            for (int y = -1; y <= 1; y++) {
-                                for (int z = -1; z <= 1; z++) {
-                                    Location location = new Location(blockLocation.getWorld(), blockLocation.getX() + x, blockLocation.getY() + y, blockLocation.getZ() + z);
-                                    if (!blockLocation.equals(location) && location.getBlock().getType() == blockBreakEvent.getBlock().getType()) {
-                                        location.getBlock().breakNaturally(item);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    return 0;
-                })
-                .maxDurability(100)
-                .build();
-
-        UNCCustomStaticType amethyst = UNCCustomStaticType.builder("AMETHYST_INGOT")
-                .name("Amethyst Ingot")
-                .lore(new ArrayList<>(List.of("This is a custom static item")))
-                .modelData(1)
-                .build();
-
-        UNCCustomActivableType amethystActivable = UNCCustomActivableType.builder("AMETHYST_ACTIVABLE")
-                .name("Amethyst Activable")
-                .lore(new ArrayList<>(List.of("This is a custom activable item")))
-                .modelData(1)
-                .action(event -> {
-                    if (event instanceof PlayerInteractEvent) {
-                        PlayerInteractEvent playerInteractEvent = (PlayerInteractEvent) event;
-
-                        if (playerInteractEvent.getClickedBlock() != null && playerInteractEvent.getClickedBlock().getType().isInteractable()) {
-                            return 0;
-                        }
-
-                        Item item = playerInteractEvent.getPlayer().getWorld().dropItem(playerInteractEvent.getPlayer().getLocation(), new ItemStack(Material.DIAMOND));
-                        item.setPickupDelay(0);
-                        return 1;
-                    }
-                    return 0;
-                })
-                .maxDurability(2)
-                .build();
-
-        UNCCustomActivableType furnaceAccessory = UNCCustomActivableType.builder("FURNACE_ACCESSORY")
-                .name("Ores Furnace Accessory")
-                .lore(new ArrayList<>(List.of("This is a custom activable item that", "can be used to cook all ores in", "the player's inventory")))
-                .modelData(2)
-                .actionToRun(((itemStack, player) -> {
-
-                    String key = "lastused";
-
-                    String lastusedSTR = CustomItemLib.getUNCCustomItemController().getAdditionalInformations(itemStack, key);
-
-                    Long lastUsed = Long.parseLong(lastusedSTR);
-
-                    long now = Instant.now().getEpochSecond();
-
-                    if (now - lastUsed < 20) return;
-
-                    // cook 1 itemStack in the player's inventory
-                    for (ItemStack item : player.getInventory().getContents()) {
-                        if (item == null) {
-                            continue;
-                        }
-
-                        boolean worked = false;
-
-                        if (item.getType() == Material.IRON_ORE) {
-                            item.setType(Material.IRON_INGOT);
-                            worked = true;
-                        } else if (item.getType() == Material.GOLD_ORE || item.getType() == Material.NETHER_GOLD_ORE) {
-                            item.setType(Material.GOLD_INGOT);
-                            worked = true;
-                        } else if (item.getType() == Material.COAL_ORE) {
-                            item.setType(Material.COAL);
-                            worked = true;
-                        } else if (item.getType() == Material.DIAMOND_ORE) {
-                            item.setType(Material.DIAMOND);
-                            worked = true;
-                        } else if (item.getType() == Material.EMERALD_ORE) {
-                            item.setType(Material.EMERALD);
-                            worked = true;
-                        } else if (item.getType() == Material.LAPIS_ORE) {
-                            item.setType(Material.LAPIS_LAZULI);
-                            worked = true;
-                        } else if (item.getType() == Material.REDSTONE_ORE) {
-                            item.setType(Material.REDSTONE);
-                            worked = true;
-                        } else if (item.getType() == Material.NETHER_QUARTZ_ORE) {
-                            item.setType(Material.QUARTZ);
-                            worked = true;
-                        } else if (item.getType() == Material.COPPER_ORE) {
-                            item.setType(Material.COPPER_INGOT);
-                            worked = true;
-                        }
-
-                        if (worked) {
-                            CustomItemLib.getUNCCustomItemController().setAdditionalInformations(itemStack, key, String.valueOf(now));
-                            break;
-                        }
-                    }
-
-
-                }))
-                .defaultAdditionalInformation(new HashMap<>(Map.of("lastused", 0L)))
-                .build();
-
-        UNCCustomChestplateType amethystChestplate = UNCCustomChestplateType.builder("AMETHYST_CHESTPLATE")
-                .name("Amethyst Chestplate")
-                .lore(new ArrayList<>(List.of("This is a custom chestplate")))
-                .modelData(1)
-                .armor(20)
-                .armorToughness(20)
-                .knockbackResistance(20)
-                .maxDurability(1)
-                .build();
-
-        UNCCustomHelmetType amethystHelmet = UNCCustomHelmetType.builder("AMETHYST_HELMET")
-                .name("Amethyst Helmet")
-                .lore(new ArrayList<>(List.of("This is a custom helmet")))
-                .modelData(1)
-                .armor(20)
-                .armorToughness(20)
-                .knockbackResistance(20)
-                .maxDurability(1)
-                .build();
-
-        UNCCustomLeggingsType amethystLeggings = UNCCustomLeggingsType.builder("AMETHYST_LEGGINGS")
-                .name("Amethyst Leggings")
-                .lore(new ArrayList<>(List.of("This is a custom leggings")))
-                .modelData(1)
-                .armor(20)
-                .armorToughness(20)
-                .knockbackResistance(20)
-                .maxDurability(1)
-                .build();
-
-        UNCCustomBootsType amethystBoots = UNCCustomBootsType.builder("AMETHYST_BOOTS")
-                .name("Amethyst Boots")
-                .lore(new ArrayList<>(List.of("This is a custom boots")))
-                .modelData(1)
-                .armor(20)
-                .armorToughness(20)
-                .knockbackResistance(20)
-                .maxDurability(1)
-                .build();
-
-        UNCCustomFoodType amethystFood = UNCCustomFoodType.builder("AMETHYST_FOOD", Material.APPLE)
-                .name("Amethyst Food")
-                .lore(new ArrayList<>(List.of("This is a custom food")))
-                .modelData(1)
-                .foodLevel(20)
-                .saturation(20)
-                .build();
-
-        CustomItemLib.getUNCCustomItemController().registerCustomItem(
-                amethystSword,
-                amethystPickaxe,
-                amethyst,
-                amethystActivable,
-                amethystChestplate,
-                amethystHelmet,
-                amethystLeggings,
-                amethystBoots,
-                amethystFood,
-                strangeSword,
-                furnaceAccessory);
-    }
-
-    public void initCustomBlocks() {
-        UNCCustomBlockType growthBlock = UNCCustomBlockType.builder("GROWTH_BLOCK")
-                .name("Growth Block")
-                .lore(new ArrayList<>(List.of("This is a custom block")))
-                .modelData(1)
-                .blockMaterial(Material.STONE)
-                .dropOnlyIfCorrectToolUsed(true)
-                .droppedItem(new ItemStack(Material.DIAMOND))
-                .build();
-
-        UNCCustomBlockType streetlightBlock = UNCCustomBlockType.builder("STREET_LIGHT_BLOCK")
-                .name("street light Block")
-                .lore(new ArrayList<>(List.of("This is a street light")))
-                .modelData(2)
-                .instantBreak(true)
-                .droppedItem(new ItemStack(Material.DIAMOND))
-                .build();
-
-        UNCCustomBlockType fleshEater = UNCCustomBlockType.builder("FLESH_EATER")
-                .name("Flesh Eater Block")
-                .lore(new ArrayList<>(List.of("This is a flesh eater")))
-                .modelData(4)
-                .instantBreak(true)
-                .defaultAdditionalInformation(new HashMap<>(Map.of("destinationSet", false)))
-                .actionRunnable(block -> {
-                    // play particles
-                    block.getLocation().getWorld().spawnParticle(
-                            Particle.ASH,
-                            block.getLocation().clone().add(0.5, 1, 0.5),
-                            20,
-                            0.25,
-                            0.25,
-                            0.25,
-                            0.1);
-                })
-                .action((event, uncCustomBlock) -> {
-                    if (event instanceof BlockPlaceEvent) {
-                        BlockPlaceEvent blockPlaceEvent = (BlockPlaceEvent) event;
-                        Message.Get().broadcastMessageToEveryone(blockPlaceEvent.getPlayer().getName());
-                    }
-                })
-                .build();
-
-        UNCCustomBlockType foreuseBlock = UNCCustomBlockType.builder("FOREUSE_BLOCK")
-                .name("Foreuse Block")
-                .lore(new ArrayList<>(List.of("This is a foreuse")))
-                .modelData(3)
-                .instantBreak(true)
-                .droppedItem(new ItemStack(Material.DIAMOND))
-                .actionToRunOnPlace((uncCustomBlock, player) -> {
-                    uncCustomBlock.setAdditionalInformation("PlayerUUID", player.getUniqueId());
-                })
-                .actionRunnable(block -> {
-
-                    // break the block as a player
-                    Player player = Bukkit.getPlayer(block.getAdditionalInformation("PlayerUUID", UUID.class));
-
-                    if (player == null) return;
-
-                    // break block in an area of 3x3 blocks at the Y level of the block
-                    Location blockLocation = block.getLocation();
-                    double yLevelToAdd = block.getAdditionalInformation("Y", Double.class);
-
-                    if (blockLocation.getY() - yLevelToAdd < -63) {
-                        block.setAdditionalInformation("Y", 1.0);
-                        return;
-                    }
-
-                    for (int x = -1; x <= 1; x++) {
-                        for (int y = -1; y <= 1; y++) {
-                            for (int z = -1; z <= 1; z++) {
-                                Location location = new Location(
-                                        blockLocation.getWorld(),
-                                        blockLocation.getX() + x,
-                                        blockLocation.getY() - yLevelToAdd,
-                                        blockLocation.getZ() + z);
-                                // drop items at the top of the main block (the block that has been placed)
-                                for (ItemStack itemStack : location.getBlock().getDrops()) {
-                                    if (player.breakBlock(location.getBlock()))
-                                        block.getLocation().getWorld().dropItemNaturally(block.getLocation().clone().add(0,1,0),itemStack);
-                                    else return;
-                                }
-
-                            }
-                        }
-                    }
-
-                    block.setAdditionalInformation("Y", yLevelToAdd + 1.0);
-                })
-                .addBaseAdditionalData("Y", 1.0)
-                .addBaseAdditionalData("PlayerUUID", null)
-                .build();
-
-        CustomBlockLib.getCustomBlockController().registerCustomBlock(growthBlock, streetlightBlock, foreuseBlock, fleshEater);
-    }
-
     public void initRecipes() {
         // TODO
 
-        NamespacedKey key = new NamespacedKey(this,"craftAmethystSword");
+        /*NamespacedKey key = new NamespacedKey(this,"craftAmethystSword");
         ItemStack result = CustomItemLib.getUNCCustomItemController().createCustomItem("AMETHYST_SWORD", 1);
         ShapelessRecipe amethystSword = new ShapelessRecipe(key, result)
                 .addIngredient(Material.DIAMOND_SWORD)
                 .addIngredient(Material.STICK);
 
         CustomItemLib.getUNCCustomItemController().registerCraft(amethystSword, null, false);
+
+         */
     }
 
     @Override
