@@ -15,9 +15,11 @@ import fr.teamunc.customitem_unclib.models.customArmors.UNCCustomHelmetType;
 import fr.teamunc.customitem_unclib.models.customArmors.UNCCustomLeggingsType;
 import fr.teamunc.ekip_unclib.EkipLib;
 import fr.teamunc.ekip_unclib.models.UNCTeam;
+import fr.teamunc.uncsurvivals2.controllers.NPCController;
 import fr.teamunc.uncsurvivals2.controllers.UNCPlayerController;
 import fr.teamunc.uncsurvivals2.helpers.BlockInitiator;
 import fr.teamunc.uncsurvivals2.helpers.ItemInitiator;
+import fr.teamunc.uncsurvivals2.listeners.NPCClickListener;
 import fr.teamunc.uncsurvivals2.metier.models.phases.UNCPhase1;
 import fr.teamunc.uncsurvivals2.metier.models.phases.UNCPhase2;
 import fr.teamunc.uncsurvivals2.metier.models.phases.UNCPhase3;
@@ -57,6 +59,9 @@ public final class UNCSurvivalS2 extends JavaPlugin {
 
     @Getter
     private UNCPlayerController playerController;
+
+    @Getter
+    private NPCController npcController;
 
     @Override
     public void onEnable() {
@@ -106,10 +111,12 @@ public final class UNCSurvivalS2 extends JavaPlugin {
 
         // Listeners
         this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+        this.getServer().getPluginManager().registerEvents(new NPCClickListener(), this);
     }
 
     private void initController() {
         this.playerController = new UNCPlayerController();
+        this.npcController = new NPCController();
     }
 
     private void initGamePhases() {
@@ -176,5 +183,6 @@ public final class UNCSurvivalS2 extends JavaPlugin {
     public void onDisable() {
         // Plugin shutdown logic
         this.getPlayerController().save();
+        this.getNpcController().save();
     }
 }

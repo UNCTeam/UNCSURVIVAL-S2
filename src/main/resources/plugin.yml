@@ -6,6 +6,7 @@ prefix: UNC
 authors: [ teamunc ]
 description: UNCSurvival Saison 2
 depend:
+  - Citizens
   - Base_UNCLib
   - Ekip_UNCLib
   - CustomItem_UNCLib

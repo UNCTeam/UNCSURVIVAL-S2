@@ -3,7 +3,6 @@ package fr.teamunc.uncsurvivals2.metier.models.players;
 import fr.teamunc.uncsurvivals2.metier.models.players.customInfos.MadnessInfo;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.UUID;

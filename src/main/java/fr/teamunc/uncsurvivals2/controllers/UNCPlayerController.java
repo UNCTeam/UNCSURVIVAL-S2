@@ -40,7 +40,7 @@ public class UNCPlayerController {
         try {
             return UNCEntitiesContainer.loadContainer("players", UNCPlayersContainer.class);
         } catch (FileNotFoundException e) {
-            UNCSurvivalS2.get().getLogger().info("Creating new custom block container file");
+            UNCSurvivalS2.get().getLogger().info("Creating new unc players container file");
             return new UNCPlayersContainer();
         }
     }
