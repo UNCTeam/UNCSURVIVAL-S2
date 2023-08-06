@@ -6,7 +6,7 @@ import fr.teamunc.base_unclib.utils.helpers.Message;
 import fr.teamunc.uncsurvivals2.UNCSurvivalS2;
 import fr.teamunc.uncsurvivals2.metier.models.npcs.NPCContainer;
 import fr.teamunc.uncsurvivals2.metier.models.npcs.UNCnpc;
-import org.bukkit.inventory.Inventory;
+import fr.teamunc.uncsurvivals2.metier.models.npcs.traits.ItemGoalsViewTrait;
 
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -17,6 +17,11 @@ public class NPCController {
     public NPCController() {
         this.npcContainer = initNPCContainer();
         Message.Get().broadcastMessageToConsole("[NPCController] : Loading " + getNpcs().size() + " unc npc data");
+    }
+
+    public void initNPCTraits() {
+        //Register your trait with Citizens.
+        net.citizensnpcs.api.CitizensAPI.getTraitFactory().registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(ItemGoalsViewTrait.class));
     }
 
     public void resetNPC() {
