@@ -1,5 +1,6 @@
 package fr.teamunc.uncsurvivals2.minecraft.commands_exec;
 
+import fr.teamunc.base_unclib.utils.helpers.Message;
 import fr.teamunc.uncsurvivals2.UNCSurvivalS2;
 import fr.teamunc.uncsurvivals2.metier.models.itemgoals.ItemGoal;
 import fr.teamunc.uncsurvivals2.metier.models.itemgoals.ItemGoalData;
@@ -29,13 +30,23 @@ public class UncSurvivalCommands implements CommandExecutor {
                 if (sender instanceof Player player) {
                     var item = player.getInventory().getItemInMainHand();
 
-                    if (item != null) {
-                        var itemGoalData = new ItemGoalData(item.getType(), item.getType().name(),item.getItemMeta().getDisplayName(),"TO reward EACH 10 ADD 1", true,10);
-                        UNCSurvivalS2.get().getItemGoalsController().addItemGoalData(itemGoalData);
+                    var itemGoalData = new ItemGoalData(item.getType(), item.getType().name(),item.getItemMeta().getDisplayName(),"TO reward EACH 10 ADD 1", true,10);
+                    UNCSurvivalS2.get().getItemGoalsController().addItemGoalData(itemGoalData);
 
-                        var itemGoal = new ItemGoal(itemGoalData.getUniqueName(), 10, 0);
-                        UNCSurvivalS2.get().getItemGoalsController().addItemGoal(itemGoal);
-                    }
+                    var itemGoal = new ItemGoal(itemGoalData.getUniqueName(), 10, 0);
+                    UNCSurvivalS2.get().getItemGoalsController().addItemGoal(itemGoal);
+
+                }
+                break;
+            case "reloadItemGoalsData":
+
+                try {
+                    UNCSurvivalS2.get().getItemGoalsController().reloadItemsGoal();
+                    Message.Get().sendMessage("Item goals reloaded from data", sender, false);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                    sender.sendMessage("Error reloadItemGoalsData");
                 }
                 break;
             default:

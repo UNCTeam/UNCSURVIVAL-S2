@@ -21,8 +21,9 @@ import java.util.Objects;
 public class ItemGoalsController implements IUNCController {
 
     private final ItemGoalsInGameContainer itemGoalsInGameContainer;
-
-    private final ItemGoalsInitDataContainer itemGoalsInitDataContainer;
+    private static final String ITEM_GOALS_IN_GAME_CONTAINER_PATH = "itemGoalsInGame";
+    private ItemGoalsInitDataContainer itemGoalsInitDataContainer;
+    private static final String ITEM_GOALS_INIT_DATA_CONTAINER_PATH = "itemGoalsInitData";
 
     public ItemGoalsController() {
 
@@ -36,7 +37,7 @@ public class ItemGoalsController implements IUNCController {
 
     private ItemGoalsInGameContainer initItemGoalsInGameContainer(ItemGoalData[] itemGoalDataList) {
         try {
-            var savedListOfInGameItemGoals = UNCEntitiesContainer.loadContainer("itemGoalsInGame", ItemGoalsInGameContainer.class);
+            var savedListOfInGameItemGoals = UNCEntitiesContainer.loadContainer(ITEM_GOALS_IN_GAME_CONTAINER_PATH, ItemGoalsInGameContainer.class);
 
             this.initAndCheckAllItemFromItemGoalsDataToInGameItemGoals(itemGoalDataList, savedListOfInGameItemGoals);
 
@@ -49,14 +50,29 @@ public class ItemGoalsController implements IUNCController {
 
     private ItemGoalsInitDataContainer initItemGoalsInitDataContainer() {
         try {
-            return UNCEntitiesContainer.loadContainer("itemGoalsInitData", ItemGoalsInitDataContainer.class);
+            return UNCEntitiesContainer.loadContainer(ITEM_GOALS_INIT_DATA_CONTAINER_PATH, ItemGoalsInitDataContainer.class);
         } catch (FileNotFoundException e) {
             UNCSurvivalS2.get().getLogger().info("Creating new unc itemGoalsInitData container file");
             return new ItemGoalsInitDataContainer();
         }
     }
 
+    /**
+     * reload item goals data from files but not in game, inGames item goals are saved to file
+     */
+    public void reloadItemsGoal() {
+        // save in game item goals
+        this.itemGoalsInGameContainer.save(ITEM_GOALS_IN_GAME_CONTAINER_PATH);
 
+        // reload item goals data
+        this.itemGoalsInitDataContainer = initItemGoalsInitDataContainer();
+        ItemGoalData[] itemGoalDataList = this.itemGoalsInitDataContainer.getItems();
+        Message.Get().broadcastMessageToConsole("[ItemGoalsController] : Loading " + itemGoalsInitDataContainer.getItems().length + " items goals data");
+
+        // generate new items goals in game from item goals data
+        this.initAndCheckAllItemFromItemGoalsDataToInGameItemGoals(itemGoalDataList, this.itemGoalsInGameContainer);
+
+    }
 
     private void initAndCheckAllItemFromItemGoalsDataToInGameItemGoals(ItemGoalData[] itemGoalDataList, ItemGoalsInGameContainer savedListOfInGameItemGoals) {
 
@@ -179,7 +195,7 @@ public class ItemGoalsController implements IUNCController {
     }
 
     public void save() {
-        this.itemGoalsInGameContainer.save("itemGoalsInGame");
-        this.itemGoalsInitDataContainer.save("itemGoalsInitData");
+        this.itemGoalsInGameContainer.save(ITEM_GOALS_IN_GAME_CONTAINER_PATH);
+        this.itemGoalsInitDataContainer.save(ITEM_GOALS_INIT_DATA_CONTAINER_PATH);
     }
 }

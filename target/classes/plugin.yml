@@ -21,16 +21,21 @@ commands:
     description: UnitedCraft Block system
     permission: unc.admin
 
+  uncitem:
+    aliases: [ unci ]
+    usage: /uncitem or /unci
+    description: UnitedCraft Item system
+    permission: unc.admin
+
   unczone:
     aliases: [ uncz ]
     usage: /unczone or /uncz
     description: UnitedCraft Zone system
     permission: unc.admin
 
-  test:
-    aliases: [ t ]
-    usage: /test or /t
-    description: Test command
+  uncs2:
+    usage: /uncs2
+    description: uncs2 command for UNCSurvivalS2
     permission: unc.admin
 
 permissions:

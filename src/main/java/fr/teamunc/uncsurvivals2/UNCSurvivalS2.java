@@ -16,10 +16,13 @@ import fr.teamunc.uncsurvivals2.metier.models.phases.UNCPhase1;
 import fr.teamunc.uncsurvivals2.metier.models.phases.UNCPhase2;
 import fr.teamunc.uncsurvivals2.metier.models.phases.UNCPhase3;
 import fr.teamunc.uncsurvivals2.minecraft.commands_exec.UncSurvivalCommands;
+import fr.teamunc.uncsurvivals2.minecraft.commands_exec.UncSurvivalTab;
 import fr.teamunc.uncsurvivals2.minecraft.eventsListeners.PlayerListener;
 import fr.teamunc.zone_unclib.ZoneLib;
 import lombok.Getter;
 import org.bukkit.*;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.time.Duration;
@@ -86,7 +89,8 @@ public final class UNCSurvivalS2 extends JavaPlugin {
 
     private void initCommandsAndListeners() {
         // Commands
-        this.getCommand("test").setExecutor(new UncSurvivalCommands());
+        this.getCommand("uncs2").setExecutor(new UncSurvivalCommands());
+        this.getCommand("uncs2").setTabCompleter(new UncSurvivalTab());
 
         // Listeners
         this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
@@ -146,7 +150,7 @@ public final class UNCSurvivalS2 extends JavaPlugin {
     public void initRecipes() {
         // TODO
 
-        /*NamespacedKey key = new NamespacedKey(this,"craftAmethystSword");
+       NamespacedKey key = new NamespacedKey(this,"craftAmethystSword");
         ItemStack result = CustomItemLib.getUNCCustomItemController().createCustomItem("AMETHYST_SWORD", 1);
         ShapelessRecipe amethystSword = new ShapelessRecipe(key, result)
                 .addIngredient(Material.DIAMOND_SWORD)
