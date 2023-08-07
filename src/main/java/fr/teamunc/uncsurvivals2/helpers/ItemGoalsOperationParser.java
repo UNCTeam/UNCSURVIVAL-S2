@@ -2,7 +2,6 @@ package fr.teamunc.uncsurvivals2.helpers;
 
 import fr.teamunc.uncsurvivals2.metier.models.itemgoals.ItemGoal;
 import fr.teamunc.uncsurvivals2.metier.models.itemgoals.ItemGoalData;
-import lombok.var;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -18,10 +17,10 @@ public class ItemGoalsOperationParser {
     }
 
     /**
-     * par exemple j'entre amountToChange = 50, itemGoal.getDeposited = 40
+     * par exemple j'entre amountToDeposite = 50, itemGoal.getDeposited = 40
      * avec l'operation : 'TO reward EACH 50 DIVIDEBY 2', que itemGoal.reward = 100,
      * alors retourne une liste de tuple avec en premier (10, 100) puis (40, 50)
-     * signifiant qu'une partie de amountToChange (ici 10) vallait 100 de (value entré à TO),
+     * signifiant qu'une partie de amountToDeposite (ici 10) vallait 100 de (value entré à TO),
      * puis suite au changement dû à l'operation, l'autre partie ne vallait plus que 50.
      * <hr>
      * <ul>Les opérations possibles sont :
@@ -38,10 +37,10 @@ public class ItemGoalsOperationParser {
      * </ul>
      * <b style="color: blue">ATTENTION : les opérations doivent être séparées par un espace</b>
      * @param itemGoal l'itemgoal à modifier
-     * @param amountToChange la quantité à modifier
+     * @param amountToDeposite la quantité à modifier
      * @return une liste de tuple avec en premier la quantité utilisée, et en deuxième la valeur de la variable modifiée
      */
-    public List<Tuple<Integer, Integer>> executeOperationAndReturnAmountForEach(ItemGoal itemGoal, int amountToChange) {
+    public List<Tuple<Integer, Integer>> executeOperationAndReturnAmountForEach(ItemGoal itemGoal, int amountToDeposite) {
 
         // split l'operation en plusieurs parties
         String[] operations = itemGoalData.getOperation().split(" ");
@@ -50,8 +49,8 @@ public class ItemGoalsOperationParser {
         List<Tuple<Integer, Integer>> results = new ArrayList<>();
 
         // si l'operation n'a pas au moins 4 arguments (TO et EACH présents + leurs valeurs)
-        if (operations.length < 4) {
-            throw new IllegalArgumentException("Operation must have at least 4 arguments with TO and EACH present spaced by a space");
+        if (operations.length < 6) {
+            throw new IllegalArgumentException("Operation must have at least 6 arguments with TO and EACH present spaced by a space and at least one operator");
         }
 
         Field fieldToOperate;
@@ -76,31 +75,41 @@ public class ItemGoalsOperationParser {
         // execute l'operation pour chaque X (EACH)
         if (Objects.equals(operations[2], "EACH")) {
 
-            // récupère la valeur de X
-            int each = Integer.parseInt(operations[3]);
+            // remove EACH part of the operations
+            operationsValuesToUse = Arrays.copyOfRange(operationsValuesToUse, 2, operationsValuesToUse.length);
 
-            int remainingAmount = amountToChange;
+            // récupère la valeur de X, Z et Y
+            int each = Integer.parseInt(operations[3]);
+            int remainingAmount = amountToDeposite;
             int currentDeposited = itemGoal.getDeposited();
 
             // tant qu'il reste de la quantité à "déposer" (non utilisée par l'opération, car on ne dépose pas vraiment ici)
             while (remainingAmount > 0) {
+                // calculer A
                 int nextMultiple = ((currentDeposited / each) + 1) * each;
                 int requiredAmountToNextMultiple = nextMultiple - currentDeposited;
+                int amountUsed;
 
-                int amountUsed = Math.min(requiredAmountToNextMultiple, remainingAmount);
+                // si Z < A
+                if (remainingAmount < requiredAmountToNextMultiple) {
+                    amountUsed = remainingAmount;
+                    results.add(new Tuple<>(amountUsed, valueToOperate));
+                } else { // si Z >= A
+                    amountUsed = requiredAmountToNextMultiple;
+                    results.add(new Tuple<>(amountUsed, valueToOperate));
 
-                results.add(new Tuple<>(amountUsed, valueToOperate));
+                    valueToOperate = parseOperation(operationsValuesToUse, valueToOperate);
+                }
 
-                // remove EACH part of the operations
-                operationsValuesToUse = Arrays.copyOfRange(operationsValuesToUse, 2, operationsValuesToUse.length);
-
-                valueToOperate = parseOperation(operationsValuesToUse, valueToOperate);
-                remainingAmount -= amountUsed;
+                // met a jour pour l item goal
                 currentDeposited += amountUsed;
+                remainingAmount -= amountUsed;
             }
 
+            // met a jour l item goal
             try {
                 fieldToOperate.setInt(itemGoal, valueToOperate);
+                itemGoal.deposited = currentDeposited;
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }

@@ -8,10 +8,10 @@ import fr.teamunc.customitem_unclib.CustomItemLib;
 import fr.teamunc.ekip_unclib.EkipLib;
 import fr.teamunc.ekip_unclib.models.UNCTeam;
 import fr.teamunc.uncsurvivals2.controllers.ItemGoalsController;
-import fr.teamunc.uncsurvivals2.controllers.NPCController;
 import fr.teamunc.uncsurvivals2.controllers.UNCPlayerController;
 import fr.teamunc.uncsurvivals2.helpers.BlockInitiator;
 import fr.teamunc.uncsurvivals2.helpers.ItemInitiator;
+import fr.teamunc.uncsurvivals2.helpers.NPCInitiator;
 import fr.teamunc.uncsurvivals2.metier.models.phases.UNCPhase1;
 import fr.teamunc.uncsurvivals2.metier.models.phases.UNCPhase2;
 import fr.teamunc.uncsurvivals2.metier.models.phases.UNCPhase3;
@@ -19,7 +19,6 @@ import fr.teamunc.uncsurvivals2.minecraft.commands_exec.UncSurvivalCommands;
 import fr.teamunc.uncsurvivals2.minecraft.eventsListeners.PlayerListener;
 import fr.teamunc.zone_unclib.ZoneLib;
 import lombok.Getter;
-import lombok.var;
 import org.bukkit.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -40,9 +39,6 @@ public final class UNCSurvivalS2 extends JavaPlugin {
 
     @Getter
     private ItemGoalsController itemGoalsController;
-
-    @Getter
-    private NPCController npcController;
 
     @Override
     public void onEnable() {
@@ -83,6 +79,9 @@ public final class UNCSurvivalS2 extends JavaPlugin {
 
         var blockInitiator = new BlockInitiator();
         blockInitiator.init();
+
+        var npcInitiator = new NPCInitiator();
+        npcInitiator.init();
     }
 
     private void initCommandsAndListeners() {
@@ -95,7 +94,6 @@ public final class UNCSurvivalS2 extends JavaPlugin {
 
     private void initController() {
         this.playerController = new UNCPlayerController();
-        this.npcController = new NPCController();
         this.itemGoalsController = new ItemGoalsController();
     }
 
@@ -163,6 +161,6 @@ public final class UNCSurvivalS2 extends JavaPlugin {
     public void onDisable() {
         // Plugin shutdown logic
         this.getPlayerController().save();
-        this.getNpcController().save();
+        this.getItemGoalsController().save();
     }
 }

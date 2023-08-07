@@ -7,7 +7,6 @@ import fr.teamunc.customitem_unclib.models.customArmors.UNCCustomChestplateType;
 import fr.teamunc.customitem_unclib.models.customArmors.UNCCustomHelmetType;
 import fr.teamunc.customitem_unclib.models.customArmors.UNCCustomLeggingsType;
 import fr.teamunc.uncsurvivals2.UNCSurvivalS2;
-import lombok.var;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;

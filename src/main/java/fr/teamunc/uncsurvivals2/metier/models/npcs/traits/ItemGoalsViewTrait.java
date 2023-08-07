@@ -1,7 +1,7 @@
 package fr.teamunc.uncsurvivals2.metier.models.npcs.traits;
 
 import fr.teamunc.uncsurvivals2.UNCSurvivalS2;
-import lombok.var;
+import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import org.bukkit.event.EventHandler;
@@ -11,14 +11,14 @@ import org.bukkit.inventory.Inventory;
 public class ItemGoalsViewTrait extends Trait {
     private final UNCSurvivalS2 plugin;
 
-    public ItemGoalsViewTrait(String name) {
-        super(name);
+    public ItemGoalsViewTrait() {
+        super("itemgoals");
         plugin = UNCSurvivalS2.get();
     }
 
     // An example event handler. All traits will be registered automatically as Spigot event Listeners
     @EventHandler
-    public void click(net.citizensnpcs.api.event.NPCRightClickEvent event){
+    public void click(NPCRightClickEvent event){
         //Handle a click on a NPC. The event has a getNPC() method.
         //Be sure to check event.getNPC() == this.getNPC() so you only handle clicks on this NPC!
         if (!event.getNPC().equals(this.getNPC())) return;
@@ -27,10 +27,7 @@ public class ItemGoalsViewTrait extends Trait {
         Inventory inv = plugin.getServer().createInventory(null, 27, "ItemGoals");
 
         // add itemGoals to inventory
-        /*for (var keyval : plugin.getItemGoalsController().getItems().entrySet()) {
-            //ItemStack
-        }*/
-
+        plugin.getItemGoalsController().getActivatedItemGoalsAsItemStack().forEach(inv::addItem);
 
 
         event.getClicker().openInventory(inv);
@@ -47,7 +44,7 @@ public class ItemGoalsViewTrait extends Trait {
     //This would be a good place to load configurable defaults for new NPCs.
     @Override
     public void onAttach() {
-        plugin.getServer().getLogger().info(npc.getName() + "has been assigned MyTrait!");
+        plugin.getServer().getLogger().info(npc.getName() + " has been assigned MyTrait!");
     }
 
     // Run code when the NPC is despawned. This is called before the entity actually despawns so npc.getEntity() is still valid.

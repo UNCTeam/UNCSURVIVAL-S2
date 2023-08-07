@@ -12,6 +12,7 @@ import java.io.Serializable;
 public class ItemGoalData implements Serializable {
     private Material material;
     private String uniqueName;
+    private String displayName;
 
     /**
      * EACH X : tout les X items
@@ -22,8 +23,9 @@ public class ItemGoalData implements Serializable {
      * MULTIPLYBY X : multiplier par X
      * TO Y : à Y, sachant que Y est une variable de la classe ItemGoal
      * <p>
-     * exemple : EACH 10 ADD 1 TO reward (ajouter 1 à la variable reward tout les 10 items)
+     * exemple : TO reward EACH 10 ADD 1 MULTIPLEBY 2(ajouter 1 à la variable reward tout les 10 items)
      */
     private String operation;
+    private boolean activated;
     private int baseReward;
 }

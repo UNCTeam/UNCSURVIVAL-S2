@@ -1,6 +1,7 @@
 package fr.teamunc.uncsurvivals2.controllers;
 
 import fr.teamunc.base_unclib.BaseLib;
+import fr.teamunc.base_unclib.controllers.IUNCController;
 import fr.teamunc.base_unclib.models.jsonEntities.UNCEntitiesContainer;
 import fr.teamunc.base_unclib.utils.helpers.Message;
 import fr.teamunc.uncsurvivals2.UNCSurvivalS2;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class UNCPlayerController {
+public class UNCPlayerController implements IUNCController {
     private final UNCPlayersContainer playersContainer;
 
     private BukkitRunnable eachTickTask;
@@ -58,13 +59,15 @@ public class UNCPlayerController {
     }
 
     public void onTickUNCPlayers(int tickInSecond) {
+        /*
         // actualise madness display bar
+
         this.getPlayers().forEach(uncPlayer -> uncPlayer.getMadnessInfo().actualiseMadnessDisplayBar());
 
         // apply madness effects only each 10 ticks
         if (tickInSecond == 0) {
             this.getPlayers().forEach(uncPlayer -> uncPlayer.getMadnessInfo().applyMadnessEffects());
-        }
+        }*/
     }
 
     private void eachTick() {
@@ -74,7 +77,6 @@ public class UNCPlayerController {
                 this.addPlayer(
                         UNCPlayer.builder()
                         .uuid(player.getUniqueId())
-                        .isDemon(false)
                         .build()
                 );
             }
@@ -82,6 +84,7 @@ public class UNCPlayerController {
     }
 
     public void playerMadnessIncreaseRandomly(UUID playerUUID, int amount) {
+        /*
         // 1 chance out of 3 to increase madness
         // only in phase 2 or more
         if (Math.random() < 0.33 && BaseLib.getUNCPhaseController().getPhaseNumber() > 0) {
@@ -89,7 +92,7 @@ public class UNCPlayerController {
             if (player.isPresent() && !player.get().getMadnessInfo().isDemon()) {
                 player.get().getMadnessInfo().addMadness(amount);
             }
-        }
+        }*/
     }
 
     public void save() {

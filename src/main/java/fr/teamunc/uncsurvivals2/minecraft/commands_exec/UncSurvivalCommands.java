@@ -1,6 +1,8 @@
 package fr.teamunc.uncsurvivals2.minecraft.commands_exec;
 
-import lombok.var;
+import fr.teamunc.uncsurvivals2.UNCSurvivalS2;
+import fr.teamunc.uncsurvivals2.metier.models.itemgoals.ItemGoal;
+import fr.teamunc.uncsurvivals2.metier.models.itemgoals.ItemGoalData;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.command.Command;
@@ -16,10 +18,24 @@ public class UncSurvivalCommands implements CommandExecutor {
 
         switch ( args[0] ) {
             case "npc":
-                if (sender instanceof Player) {
+                if (sender instanceof Player player) {
                     var name = args[1] != null ? args[1] : "NPC";
                     NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, name);
-                    npc.spawn(((Player) sender).getLocation());
+                    npc.spawn(player.getLocation());
+                }
+                break;
+
+            case "itemGoalData":
+                if (sender instanceof Player player) {
+                    var item = player.getInventory().getItemInMainHand();
+
+                    if (item != null) {
+                        var itemGoalData = new ItemGoalData(item.getType(), item.getType().name(),item.getItemMeta().getDisplayName(),"TO reward EACH 10 ADD 1", true,10);
+                        UNCSurvivalS2.get().getItemGoalsController().addItemGoalData(itemGoalData);
+
+                        var itemGoal = new ItemGoal(itemGoalData.getUniqueName(), 10, 0);
+                        UNCSurvivalS2.get().getItemGoalsController().addItemGoal(itemGoal);
+                    }
                 }
                 break;
             default:
