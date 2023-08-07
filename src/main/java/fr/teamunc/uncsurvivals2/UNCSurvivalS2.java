@@ -111,7 +111,7 @@ public final class UNCSurvivalS2 extends JavaPlugin {
         BaseLib.getUNCScoreboardController().registerUNCScoreboardType(
             "§6§lUNC Survival Saison 2",
                 // lines actualiser
-                (player) -> {
+                player -> {
                     List<String> lines = new ArrayList<>();
                     UNCTeam team = EkipLib.getTeamController().getTeamOfPlayer(player.getUniqueId());
                     UNCPhase phase = BaseLib.getUNCPhaseController().getActualPhaseInstance();
@@ -148,7 +148,6 @@ public final class UNCSurvivalS2 extends JavaPlugin {
     }
 
     public void initRecipes() {
-        // TODO
 
        NamespacedKey key = new NamespacedKey(this,"craftAmethystSword");
         ItemStack result = CustomItemLib.getUNCCustomItemController().createCustomItem("AMETHYST_SWORD", 1);
@@ -158,7 +157,6 @@ public final class UNCSurvivalS2 extends JavaPlugin {
 
         CustomItemLib.getUNCCustomItemController().registerCraft(amethystSword, null, false);
 
-         */
     }
 
     @Override
