@@ -6,6 +6,7 @@ prefix: UNC
 authors: [ teamunc ]
 description: UNCSurvival Saison 2
 depend:
+  - Citizens
   - Base_UNCLib
   - Ekip_UNCLib
   - CustomItem_UNCLib
@@ -13,16 +14,11 @@ depend:
   - Zone_UNCLib
 
 commands:
-  uncteam:
-    aliases: [ unct ]
-    usage: /uncteam or /unct
-    description: UnitedCraft Team system
-    permission: unc.admin
 
-  uncgame:
-    aliases: [ unc ]
-    usage: /uncgame or /unc
-    description: UnitedCraft Game system
+  uncblock:
+    aliases: [ uncb ]
+    usage: /uncblock or /uncb
+    description: UnitedCraft Block system
     permission: unc.admin
 
   uncitem:
@@ -31,22 +27,15 @@ commands:
     description: UnitedCraft Item system
     permission: unc.admin
 
-  uncblock:
-    aliases: [ uncb ]
-    usage: /uncblock or /uncb
-    description: UnitedCraft Block system
-    permission: unc.admin
-
   unczone:
     aliases: [ uncz ]
     usage: /unczone or /uncz
     description: UnitedCraft Zone system
     permission: unc.admin
 
-  test:
-    aliases: [ t ]
-    usage: /test or /t
-    description: Test command
+  uncs2:
+    usage: /uncs2
+    description: uncs2 command for UNCSurvivalS2
     permission: unc.admin
 
 permissions:

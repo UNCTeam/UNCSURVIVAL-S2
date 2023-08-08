@@ -7,20 +7,22 @@ import fr.teamunc.customblock_unclib.CustomBlockLib;
 import fr.teamunc.customitem_unclib.CustomItemLib;
 import fr.teamunc.ekip_unclib.EkipLib;
 import fr.teamunc.ekip_unclib.models.UNCTeam;
-import fr.teamunc.uncsurvivals2.controllers.NPCController;
+import fr.teamunc.uncsurvivals2.controllers.ItemGoalsController;
 import fr.teamunc.uncsurvivals2.controllers.UNCPlayerController;
 import fr.teamunc.uncsurvivals2.helpers.BlockInitiator;
 import fr.teamunc.uncsurvivals2.helpers.ItemInitiator;
-import fr.teamunc.uncsurvivals2.listeners.NPCClickListener;
+import fr.teamunc.uncsurvivals2.helpers.NPCInitiator;
 import fr.teamunc.uncsurvivals2.metier.models.phases.UNCPhase1;
 import fr.teamunc.uncsurvivals2.metier.models.phases.UNCPhase2;
 import fr.teamunc.uncsurvivals2.metier.models.phases.UNCPhase3;
 import fr.teamunc.uncsurvivals2.minecraft.commands_exec.UncSurvivalCommands;
+import fr.teamunc.uncsurvivals2.minecraft.commands_exec.UncSurvivalTab;
 import fr.teamunc.uncsurvivals2.minecraft.eventsListeners.PlayerListener;
 import fr.teamunc.zone_unclib.ZoneLib;
 import lombok.Getter;
-import lombok.var;
 import org.bukkit.*;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.time.Duration;
@@ -39,7 +41,7 @@ public final class UNCSurvivalS2 extends JavaPlugin {
     private UNCPlayerController playerController;
 
     @Getter
-    private NPCController npcController;
+    private ItemGoalsController itemGoalsController;
 
     @Override
     public void onEnable() {
@@ -52,10 +54,9 @@ public final class UNCSurvivalS2 extends JavaPlugin {
         }
         UNCEntitiesContainer.init(getDataFolder());
 
-        // init team informations
+        // init team information
         HashMap<String, Object> teamsinfosModel = new HashMap<>();
-        teamsinfosModel.put("money", 0.0);
-        teamsinfosModel.put("score", 10.0);
+        teamsinfosModel.put("score", 0.0);
 
         // init base lib
         EkipLib.init(this, teamsinfosModel);
@@ -81,20 +82,23 @@ public final class UNCSurvivalS2 extends JavaPlugin {
 
         var blockInitiator = new BlockInitiator();
         blockInitiator.init();
+
+        var npcInitiator = new NPCInitiator();
+        npcInitiator.init();
     }
 
     private void initCommandsAndListeners() {
         // Commands
-        this.getCommand("test").setExecutor(new UncSurvivalCommands());
+        this.getCommand("uncs2").setExecutor(new UncSurvivalCommands());
+        this.getCommand("uncs2").setTabCompleter(new UncSurvivalTab());
 
         // Listeners
         this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
-        this.getServer().getPluginManager().registerEvents(new NPCClickListener(), this);
     }
 
     private void initController() {
         this.playerController = new UNCPlayerController();
-        this.npcController = new NPCController();
+        this.itemGoalsController = new ItemGoalsController();
     }
 
     private void initGamePhases() {
@@ -107,7 +111,7 @@ public final class UNCSurvivalS2 extends JavaPlugin {
         BaseLib.getUNCScoreboardController().registerUNCScoreboardType(
             "§6§lUNC Survival Saison 2",
                 // lines actualiser
-                (player) -> {
+                player -> {
                     List<String> lines = new ArrayList<>();
                     UNCTeam team = EkipLib.getTeamController().getTeamOfPlayer(player.getUniqueId());
                     UNCPhase phase = BaseLib.getUNCPhaseController().getActualPhaseInstance();
@@ -144,9 +148,8 @@ public final class UNCSurvivalS2 extends JavaPlugin {
     }
 
     public void initRecipes() {
-        // TODO
 
-        /*NamespacedKey key = new NamespacedKey(this,"craftAmethystSword");
+       NamespacedKey key = new NamespacedKey(this,"craftAmethystSword");
         ItemStack result = CustomItemLib.getUNCCustomItemController().createCustomItem("AMETHYST_SWORD", 1);
         ShapelessRecipe amethystSword = new ShapelessRecipe(key, result)
                 .addIngredient(Material.DIAMOND_SWORD)
@@ -154,13 +157,12 @@ public final class UNCSurvivalS2 extends JavaPlugin {
 
         CustomItemLib.getUNCCustomItemController().registerCraft(amethystSword, null, false);
 
-         */
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
         this.getPlayerController().save();
-        this.getNpcController().save();
+        this.getItemGoalsController().save();
     }
 }
