@@ -10,6 +10,7 @@ import fr.teamunc.ekip_unclib.models.UNCTeam;
 import fr.teamunc.uncsurvivals2.controllers.ItemGoalsController;
 import fr.teamunc.uncsurvivals2.controllers.UNCPlayerController;
 import fr.teamunc.uncsurvivals2.helpers.BlockInitiator;
+import fr.teamunc.uncsurvivals2.helpers.EventsInitiator;
 import fr.teamunc.uncsurvivals2.helpers.ItemInitiator;
 import fr.teamunc.uncsurvivals2.helpers.NPCInitiator;
 import fr.teamunc.uncsurvivals2.metier.models.phases.UNCPhase1;
@@ -85,6 +86,9 @@ public final class UNCSurvivalS2 extends JavaPlugin {
 
         var npcInitiator = new NPCInitiator();
         npcInitiator.init();
+
+        var eventsInitiator = new EventsInitiator();
+        eventsInitiator.init();
     }
 
     private void initCommandsAndListeners() {
@@ -148,7 +152,7 @@ public final class UNCSurvivalS2 extends JavaPlugin {
     }
 
     public void initRecipes() {
-
+/*
        NamespacedKey key = new NamespacedKey(this,"craftAmethystSword");
         ItemStack result = CustomItemLib.getUNCCustomItemController().createCustomItem("AMETHYST_SWORD", 1);
         ShapelessRecipe amethystSword = new ShapelessRecipe(key, result)
@@ -156,7 +160,7 @@ public final class UNCSurvivalS2 extends JavaPlugin {
                 .addIngredient(Material.STICK);
 
         CustomItemLib.getUNCCustomItemController().registerCraft(amethystSword, null, false);
-
+*/
     }
 
     @Override

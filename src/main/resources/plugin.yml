@@ -15,6 +15,18 @@ depend:
 
 commands:
 
+  uncevent:
+    aliases: [ unce ]
+    usage: /uncevent or /unce
+    description: UnitedCraft Event system
+    permission: unc.admin
+
+  uncgame:
+    aliases: [ uncg ]
+    usage: /uncg or /uncgame
+    description: UnitedCraft Game system
+    permission: unc.admin
+
   uncblock:
     aliases: [ uncb ]
     usage: /uncblock or /uncb
